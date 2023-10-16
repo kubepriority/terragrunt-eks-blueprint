@@ -1,0 +1,1 @@
+helm upgrade --install --create-namespace --namespace ingress-nginx ingress-nginx ingress-nginx/ingress-nginx --set controller.hostNetwork=true,controller.service.type="",controller.kind=DaemonSet,controller.daemonset.useHostPort=true --set controller.watchIngressWithoutClass=true

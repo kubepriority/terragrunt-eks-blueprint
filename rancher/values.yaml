@@ -1,0 +1,9 @@
+# Valores personalizados para o lançamento do Helm do Rancher
+replicas: 1
+tls: external
+bootstrapPassword: "Changeme123!"
+privateCA: true
+hostname: "console.edscloudtest.com"
+
+service:
+  type: "NodePort"

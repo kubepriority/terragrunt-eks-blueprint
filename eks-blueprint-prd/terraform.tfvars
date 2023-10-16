@@ -1,0 +1,5 @@
+name               = "eks-treinamento-prd"
+region             = "us-east-1"
+certificate_arn    = "arn:aws:acm:us-east-1:219469607196:certificate/2e661337-1745-485a-9c2e-fa4343f9bd9e"
+start_time_scale_up   = "2023-10-15T08:00:00Z"
+start_time_scale_down = "2023-10-15T16:00:00Z"

@@ -1,0 +1,21 @@
+[Unit]
+Description=SNAT via ENI
+# Adiciona uma dependência na rede estar operacional
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Executa o script
+ExecStart=/opt/nat/snat.sh
+Type=oneshot
+# Configurações de reinício
+Restart=on-failure
+RestartSec=3
+# Logging
+StandardOutput=journal
+StandardError=journal
+# Timeout
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target
