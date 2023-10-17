@@ -67,7 +67,7 @@ resource "helm_release" "rancher" {
   chart      = "rancher"
   namespace  = "cattle-system"
   version    = "2.7.6"
-  create_namespace = true
+  #create_namespace = true
 
   values = [
     file("${path.module}/values.yaml")

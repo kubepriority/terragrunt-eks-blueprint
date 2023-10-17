@@ -14,7 +14,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: '1800'
     nginx.ingress.kubernetes.io/proxy-send-timeout: '1800'
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
-    external-dns.alpha.kubernetes.io/hostname: console.edscloudtest.com
+    #external-dns.alpha.kubernetes.io/hostname: console.edscloudtest.com
 spec:
   ingressClassName: alb
   rules:
