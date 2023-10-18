@@ -62,7 +62,7 @@ module "eks" {
   version = "~> 19.13"
 
   cluster_name                   = local.name
-  cluster_version                = "1.26"
+  cluster_version                = var.cluster_version
   cluster_endpoint_public_access = true
 
   vpc_id          = data.terraform_remote_state.remote.outputs.vpc_id
@@ -271,6 +271,73 @@ resource "kubernetes_storage_class_v1" "gp3" {
   }
 
 }
+
+################################################################################
+# Managed USERS EKS
+################################################################################
+
+resource "aws_iam_role" "eks_admin_role" {
+  name = "eks-admin-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "eks.amazonaws.com"
+        },
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_admin_policy" {
+  role       = aws_iam_role.eks_admin_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+resource "aws_iam_group" "eks_admin_group" {
+  name = "eks-admin-group"
+}
+
+resource "aws_iam_group_policy" "eks_admin_assume_role" {
+  name  = "eks-admin-assume-role-policy"
+  group = aws_iam_group.eks_admin_group.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Resource = aws_iam_role.eks_admin_role.arn
+      },
+    ]
+  })
+}
+
+#Criando a identidade:
+#eksctl create iamidentitymapping --cluster eks-treinamento-prd --arn arn:aws:iam::219469607196:group/eks-admin-group --group system:masters --username admin
+
+resource "kubernetes_cluster_role_binding" "eks_admin_group_binding" {
+  metadata {
+    name = "eks-admin-group-binding"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin" # system:masters é mapeado para cluster-admin em EKS
+  }
+  subject {
+    kind      = "Group"
+    name      = "system:masters" # Isso deve corresponder ao grupo definido no mapeamento de identidade IAM do EKS
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
+
 
 ################################################################################
 # Supporting Resources

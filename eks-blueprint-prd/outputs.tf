@@ -10,6 +10,11 @@ output "cluster_name" {
   value = module.eks.cluster_name
 }
 
+output "cluster_version" {
+  value       = var.cluster_version
+  description = "The EKS cluster version."
+}
+
 output "cluster_certificate_authority_data" {
   value = module.eks.cluster_certificate_authority_data
 }

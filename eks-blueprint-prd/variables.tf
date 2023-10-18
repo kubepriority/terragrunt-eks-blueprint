@@ -8,6 +8,12 @@ variable "region" {
   type        = string
 }
 
+variable "cluster_version" {
+  type        = string
+  description = "A versão do cluster EKS a ser utilizada."
+  default = "1.26"
+}
+
 variable "certificate_arn" {
   description = "O ARN do certificado ACM a ser utilizado pelo Application Load Balancer"
   type        = string

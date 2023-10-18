@@ -67,7 +67,7 @@ resource "helm_release" "rancher" {
   chart      = "rancher"
   namespace  = "cattle-system"
   version    = "2.7.6"
-  #create_namespace = true
+  create_namespace = true
 
   values = [
     file("${path.module}/values.yaml")
@@ -75,8 +75,14 @@ resource "helm_release" "rancher" {
 
 }
 
-resource "kubernetes_manifest" "rancher_ingress" {
+resource "null_resource" "apply_ingress" {
   count = var.enable_alb_ingress ? 1 : 0
 
-  manifest = yamldecode(file("${path.module}/rancher-ingress-alb.yaml"))
+  triggers = { 
+    manifest_yaml = "${path.module}/rancher-ingress-alb.yaml"
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl apply -f ${self.triggers.manifest_yaml}"
+  }
 }

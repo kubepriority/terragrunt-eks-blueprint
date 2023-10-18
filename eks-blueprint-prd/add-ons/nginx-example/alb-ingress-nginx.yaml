@@ -8,6 +8,7 @@ metadata:
     alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:219469607196:certificate/fb7c7937-ee0e-43ff-a657-722a826ccec0
     alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-east-1:219469607196:regional/webacl/Nginx-acl/93744c85-d5d7-4f51-8a07-b582ec9ccd2f
     external-dns.alpha.kubernetes.io/hostname: nginx.edscloudtest.com
 spec:
   ingressClassName: alb

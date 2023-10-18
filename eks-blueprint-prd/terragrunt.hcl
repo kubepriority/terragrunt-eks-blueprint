@@ -29,5 +29,17 @@ data "terraform_remote_state" "remote" {
     region         = "${local.common_vars.aws_region}"
   }
 }
+
+data "aws_eks_addon_version" "latest" {
+  for_each = toset(["vpc-cni"])
+
+  addon_name         = each.value
+  kubernetes_version = module.eks.cluster_version
+  most_recent        = true
+}
+
+data "aws_ssm_parameter" "eks_optimized_ami" {
+  name = "/aws/service/eks/optimized-ami/${local.common_vars.cluster_version}/amazon-linux-2/recommended/image_id"
+}
 EOF
 }
