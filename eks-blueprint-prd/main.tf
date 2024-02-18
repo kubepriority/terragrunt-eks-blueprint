@@ -77,11 +77,19 @@ module "eks" {
     }
   }
 
+  # EKS Addons
+  cluster_addons = {
+    coredns    = {}
+    kube-proxy = {}
+    vpc-cni    = {}
+  }
+
   #REF: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/examples/eks_managed_node_group/main.tf
   eks_managed_node_groups = {
     core_node_group = {
       #name            = "Nodegroup-t3-xlarge-01"
       instance_types = ["t3.xlarge"]
+      iam_role_arn = aws_iam_role.eks_node_group_role.arn
 
       ami_type = "BOTTLEROCKET_x86_64"
       platform = "bottlerocket"
@@ -119,6 +127,7 @@ module "eks" {
     additional_node_group = {
       #name            = "Nodegroup-t3-xlarge-02"
       instance_types = ["t3.xlarge"]
+      iam_role_arn = aws_iam_role.eks_node_group_role.arn
 
       ami_type = "BOTTLEROCKET_x86_64"
       platform = "bottlerocket"
@@ -176,28 +185,13 @@ module "eks" {
 ################################################################################
 
 module "eks_blueprints_addons" {
-  source = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.0" #ensure to update this to the latest/desired version
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
 
-  cluster_name      = module.eks.cluster_name
-  cluster_endpoint  = module.eks.cluster_endpoint
-  cluster_version   = module.eks.cluster_version
-  oidc_provider_arn = module.eks.oidc_provider_arn
-
-  eks_addons = {
-    aws-ebs-csi-driver = {
-      most_recent = true
-    }
-    coredns = {
-      most_recent = true
-    }
-    vpc-cni = {
-      most_recent = true
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-  }
+  eks_cluster_id        = module.eks.cluster_name
+  eks_cluster_endpoint  = module.eks.cluster_endpoint
+  eks_cluster_version   = module.eks.cluster_version
+  eks_oidc_provider     = module.eks.oidc_provider
+  eks_oidc_provider_arn = module.eks.oidc_provider_arn
 
   enable_aws_load_balancer_controller = true
   aws_load_balancer_controller = {
@@ -216,16 +210,23 @@ module "eks_blueprints_addons" {
       }
     ]
   }
+
+  enable_amazon_eks_aws_ebs_csi_driver   = true
   enable_cluster_autoscaler              = true
   enable_metrics_server                  = true
-  enable_external_dns                    = true
+  enable_external_dns                    = false
   external_dns_route53_zone_arns         = ["arn:aws:route53:::hostedzone/Z09826242LD44BES3LPKM"]
-  enable_cert_manager                    = true
+  #enable_cert_manager                    = true
   #cert_manager_route53_hosted_zone_arns  = ["arn:aws:route53:::hostedzone/Z09826242LD44BES3LPKM"]
 
   tags = {
     Environment = "prd"
   }
+
+  depends_on = [
+    module.eks
+  ]
+
 }
 
 

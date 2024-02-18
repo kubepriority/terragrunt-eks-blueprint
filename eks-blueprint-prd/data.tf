@@ -9,8 +9,8 @@ data "aws_vpc" "vpc" {
 data "terraform_remote_state" "remote" {
   backend = "s3"
   config = {
-    bucket         = "vpc-terraform-treinamento-state-prd"
-    dynamodb_table = "treinamento-tf-lock-table-prd"
+    bucket         = "vpc-terraform-treinamento-state-lab"
+    dynamodb_table = "treinamento-tf-lock-table-lab"
     encrypt        = true
     key            = "vpc/terraform.tfstate"
     region         = "us-east-1"

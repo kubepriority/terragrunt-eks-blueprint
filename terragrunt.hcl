@@ -1,9 +1,5 @@
 locals {
-  common_vars = {
-    aws_region       = "us-east-1"
-    s3_bucket        = "vpc-terraform-treinamento-state-prd"
-    dynamodb_table   = "treinamento-tf-lock-table-prd"
-  }
+  common_vars = read_terragrunt_config(find_in_parent_folders("locals.hcl")).locals.common_vars
 }
 
 generate "version" {
