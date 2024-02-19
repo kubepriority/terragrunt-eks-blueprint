@@ -27,8 +27,8 @@ provider "kubectl" {
 }
 
 locals {
-  name   = var.name
-  region = var.region
+  name   = var.cluster_name
+  region = var.aws_region
 
   tags = {
     Blueprint  = local.name

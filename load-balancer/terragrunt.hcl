@@ -37,3 +37,13 @@ data "terraform_remote_state" "eks_remote" {
 }
 EOF
 }
+
+generate "variables" {
+  path      = "terraform.auto.tfvars"
+  if_exists = "overwrite"
+  contents  = <<EOF
+aws_region            = "${local.common_vars.aws_region}"
+cluster_name          = "${local.common_vars.cluster_name}"
+certificate_arn       = "${local.common_vars.certificate_arn}"
+EOF
+}

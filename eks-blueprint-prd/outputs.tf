@@ -25,5 +25,5 @@ output "cluster_endpoint" {
 
 output "configure_kubectl" {
   description = "Configure o kubectl: certifique-se de estar logado com o perfil AWS correto e execute o seguinte comando para atualizar seu kubeconfig"
-  value       = "aws eks update-kubeconfig --name ${module.eks.cluster_name} --alias ${module.eks.cluster_name} --region ${local.region}"
+  value       = "aws eks update-kubeconfig --name ${module.eks.cluster_name} --alias ${module.eks.cluster_name} --region ${var.aws_region}"
 }

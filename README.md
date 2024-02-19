@@ -1,36 +1,61 @@
-## Introdução
-**O Terragrunt é um wrapper fino que fornece ferramentas extras para manter suas configurações DRY, trabalhando com vários módulos Terraform e gerenciando o estado remoto.**
+# Projeto Terragrunt EKS Blueprint
 
-Para Iniciar:
+## Descrição
 
-[Install Terraform.](https://learn.hashicorp.com/terraform/getting-started/install)
+Este projeto utiliza o Terragrunt e Terraform para provisionar um ambiente Kubernetes na AWS usando o Amazon EKS. Ele inclui a configuração de uma VPC, um cluster EKS, um Application Load Balancer (ALB) configurado com o Nginx Ingress Controller para roteamento de tráfego, e a instalação do Rancher para gerenciamento do cluster.
 
-[Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+## Estrutura do Repositório
 
-[Install Terragrunt.](https://terragrunt.gruntwork.io/docs/getting-started/install/)
+O repositório está organizado nas seguintes pastas e arquivos principais:
 
-Coloque sua configuração do Terragrunt em um arquivo terragrunt.hcl. Você verá várias configurações de exemplo em breve.
+- `eks-blueprint-prd`: Contém os arquivos de configuração do Terragrunt para provisionar o cluster EKS no ambiente de produção.
+- `load-balancer`: Configura um ALB e instala o Nginx Ingress Controller.
+- `rancher`: Responsável pela instalação e configuração do Rancher.
+- `vpc`: Define a rede VPC onde o cluster EKS e outros recursos serão implantados.
+- `.gitignore`: Lista de arquivos e pastas ignorados pelo Git.
+- `LICENSE`: O arquivo de licença do projeto.
+- `README.md`: Este arquivo, com informações sobre o projeto, como usar, etc.
+- `locals.hcl`: Arquivo com definições de variáveis locais usadas em várias configurações do Terragrunt.
+- `terragrunt.hcl`: Arquivo de configuração principal do Terragrunt.
+- `version.tf`: Define as versões do Terraform e dos provedores utilizados.
 
-Caso não queira configurar o AWS CLI utilize a fprma abaixo:
+## Pré-requisitos
+
+- Terraform >= 1.7.3
+- Terragrunt >= v0.48.1
+- AWS CLI configurado com credenciais apropriadas
+
+## Como Usar
+
+Para utilizar este projeto, siga os passos abaixo, começando obrigatoriamente pelo módulo de VPC seguido pelo EKS:
+
+### Provisionando a VPC
+
+Navegue até o diretório da VPC e execute:
 
 ```sh
-terragrunt apply --auto-approve \
-  -var env=$ENV_SUFFIX \
-  -var tf_master_key=$TF_MASTER_ACCESS_KEY \
-  -var tf_master_secret_key=$TM_MASTER_ACCOUNT_ACCESS_KEY_ID \
-  -var region=$AWS_DEFAULT_REGION
+cd vpc
+terragrunt apply --var-file=terraform.tfvar
 ```
 
-Agora, em vez de executar o terraform diretamente, você executa os mesmos comandos com o terragrunt:
+### Provisionando o Cluster EKS
 
 ```sh
-terragrunt plan
+cd eks-blueprint-prd
+terragrunt apply --var-file=terraform.tfvar
+``` 
+
+### Configurando o ALB e o Nginx Ingress Controller
+
+```sh
+cd load-balancer
 terragrunt apply
-terragrunt output
-terragrunt destroy
 ```
-O Terragrunt encaminhará quase todos os comandos, argumentos e opções diretamente para o Terraform, mas com base nas configurações do seu arquivo terragrunt.hcl.
 
-Procure a referencia do arquivo na documentação oficial: <https://terragrunt.gruntwork.io/docs/getting-started/quick-start/>
+### Instalando o Rancher
 
-### [STF](https://stf.org.br)
+```sh
+cd rancher
+terragrunt apply --var-file=terraform.tfvar
+```
+>Repita o processo para outros componentes conforme necessário, ajustando o caminho para o diretório correspondente.

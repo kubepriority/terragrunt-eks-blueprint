@@ -24,7 +24,7 @@ module "vpc" {
  
   private_subnet_names     = ["Subnet-Private-EKS-AZ-1A", "Subnet-Private-EKS-AZ-1B", "Subnet-Private-EKS-AZ-1C"]
   public_subnet_names      = ["Subnet-Public-AZ-1A", "Subnet-Public-AZ-1B", "Subnet-Public-AZ-1C"]
-  database_subnet_names    = ["Subnet-Private-RDS-AZ-1A", "Subnet-Private-RDS-AZ-1B", "Subnet-Private-RDS-AZ-1C"]
+  database_subnet_names    = ["Subnet-Private-DB-AZ-1A", "Subnet-Private-DB-AZ-1B", "Subnet-Private-DBS-AZ-1C"]
   #elasticache_subnet_names = ["Subnet-Private-SF-AZ-1A", "Subnet-Private-SF-AZ-1B", "Subnet-Private-SF-AZ-1C"]
   #redshift_subnet_names    = ["Subnet-Private-VPC-Hub-1A", "Subnet-Private-VPC-Hub-1B"]
 
@@ -149,21 +149,11 @@ resource "aws_security_group_rule" "ingress_any-zone1a" {
   protocol          = "all"
 }
 
-resource "aws_security_group_rule" "ingress_sf-zone1a" {
-  description       = "Subnet-Private-SF-AZ-1A"
+resource "aws_security_group_rule" "ingress_DB-zone1a" {
+  description       = "Subnet-Private-DB-AZ-1A"
   security_group_id = aws_security_group.zone1a.id
   type              = "ingress"
-  cidr_blocks       = slice(var.elasticache_subnets_cidr_blocks, 0, 1)
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "all"
-}
-
-resource "aws_security_group_rule" "ingress_HUB-zone1a" {
-  description       = "Subnet-Private-VPC-Hub-1A"
-  security_group_id = aws_security_group.zone1a.id
-  type              = "ingress"
-  cidr_blocks       = slice(var.redshift_subnets_cidr_blocks, 0, 1)
+  cidr_blocks       = slice(var.database_subnets_cidr_blocks, 0, 1)
   from_port         = 0
   to_port           = 65535
   protocol          = "all"
@@ -358,21 +348,11 @@ resource "aws_security_group_rule" "ingress_any-zone1b" {
   protocol          = "all"
 }
 
-resource "aws_security_group_rule" "ingress_sf-zone1b" {
-  description       = "Subnet-Private-SF-AZ-1B"
+resource "aws_security_group_rule" "ingress_DBzone1b" {
+  description       = "Subnet-Private-DB-AZ-1B"
   security_group_id = aws_security_group.zone1b.id
   type              = "ingress"
-  cidr_blocks       = slice(var.elasticache_subnets_cidr_blocks, 1, 2)
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "all"
-}
-
-resource "aws_security_group_rule" "ingress_HUB-zone1b" {
-  description       = "Subnet-Private-VPC-Hub-1B"
-  security_group_id = aws_security_group.zone1b.id
-  type              = "ingress"
-  cidr_blocks       = slice(var.redshift_subnets_cidr_blocks, 1, 2)
+  cidr_blocks       = slice(var.database_subnets_cidr_blocks, 1, 2)
   from_port         = 0
   to_port           = 65535
   protocol          = "all"
@@ -567,11 +547,11 @@ resource "aws_security_group_rule" "ingress_any-zone1c" {
   protocol          = "all"
 }
 
-resource "aws_security_group_rule" "ingress_sf-zone1c" {
-  description       = "Subnet-Private-SF-AZ-1C"
+resource "aws_security_group_rule" "ingress_DB-zone1c" {
+  description       = "Subnet-Private-DB-AZ-1C"
   security_group_id = aws_security_group.zone1c.id
   type              = "ingress"
-  cidr_blocks       = slice(var.elasticache_subnets_cidr_blocks, 2, 3)
+  cidr_blocks       = slice(var.database_subnets_cidr_blocks, 2, 3)
   from_port         = 0
   to_port           = 65535
   protocol          = "all"

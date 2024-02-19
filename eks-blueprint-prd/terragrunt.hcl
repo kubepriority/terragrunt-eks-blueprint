@@ -43,3 +43,16 @@ data "aws_ssm_parameter" "eks_optimized_ami" {
 }
 EOF
 }
+
+generate "variables" {
+  path      = "terraform.auto.tfvars"
+  if_exists = "overwrite"
+  contents  = <<EOF
+aws_region            = "${local.common_vars.aws_region}"
+cluster_version       = "${local.common_vars.cluster_version}"
+cluster_name          = "${local.common_vars.cluster_name}"
+certificate_arn       = "${local.common_vars.certificate_arn}"
+start_time_scale_up   = "${local.common_vars.start_time_scale_up}"
+start_time_scale_down = "${local.common_vars.start_time_scale_down}"
+EOF
+}

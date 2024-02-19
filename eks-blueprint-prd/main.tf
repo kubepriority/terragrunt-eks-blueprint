@@ -41,8 +41,7 @@ provider "kubectl" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  name   = var.name
-  region = var.region
+  name   = var.cluster_name
 
   #vpc_cidr = var.vpc_cidr
   #azs      = slice(data.aws_availability_zones.available.names, 0, 3)
@@ -77,19 +76,18 @@ module "eks" {
     }
   }
 
-  # EKS Addons
-  cluster_addons = {
-    coredns    = {}
-    kube-proxy = {}
-    vpc-cni    = {}
-  }
+  ## EKS Addons
+  #cluster_addons = {
+  #  coredns    = {}
+  #  kube-proxy = {}
+  #  vpc-cni    = {}
+  #}
 
   #REF: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/examples/eks_managed_node_group/main.tf
   eks_managed_node_groups = {
     core_node_group = {
       #name            = "Nodegroup-t3-xlarge-01"
       instance_types = ["t3.xlarge"]
-      iam_role_arn = aws_iam_role.eks_node_group_role.arn
 
       ami_type = "BOTTLEROCKET_x86_64"
       platform = "bottlerocket"
@@ -127,7 +125,6 @@ module "eks" {
     additional_node_group = {
       #name            = "Nodegroup-t3-xlarge-02"
       instance_types = ["t3.xlarge"]
-      iam_role_arn = aws_iam_role.eks_node_group_role.arn
 
       ami_type = "BOTTLEROCKET_x86_64"
       platform = "bottlerocket"
@@ -193,25 +190,26 @@ module "eks_blueprints_addons" {
   eks_oidc_provider     = module.eks.oidc_provider
   eks_oidc_provider_arn = module.eks.oidc_provider_arn
 
-  enable_aws_load_balancer_controller = true
-  aws_load_balancer_controller = {
-    set = [
-      {
-        name  = "vpcId"
-        value = data.terraform_remote_state.remote.outputs.vpc_id
-      },
-      {
-        name  = "podDisruptionBudget.maxUnavailable"
-        value = 1
-      },
-      {
-        name  = "enableServiceMutatorWebhook"
-        value = "false"
-      }
-    ]
-  }
 
-  enable_amazon_eks_aws_ebs_csi_driver   = true
+  enable_aws_load_balancer_controller = true
+  #aws_load_balancer_controller = {
+  #  set = [
+  #    {
+  #      name  = "vpcId"
+  #      value = data.terraform_remote_state.remote.outputs.vpc_id
+  #    },
+  #    {
+  #      name  = "podDisruptionBudget.maxUnavailable"
+  #      value = 1
+  #    },
+  #    {
+  #      name  = "enableServiceMutatorWebhook"
+  #      value = "false"
+  #    }
+  #  ]
+  #}
+#
+  #enable_amazon_eks_aws_ebs_csi_driver   = true
   enable_cluster_autoscaler              = true
   enable_metrics_server                  = true
   enable_external_dns                    = false

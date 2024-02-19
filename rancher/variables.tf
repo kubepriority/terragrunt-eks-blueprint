@@ -1,9 +1,9 @@
-variable "name" {
+variable "cluster_name" {
   description = "Name of the resource"
   type        = string
 }
 
-variable "region" {
+variable "aws_region" {
   description = "AWS region"
   type        = string
 }
